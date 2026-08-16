@@ -15,6 +15,7 @@ Flyway-owned PostgreSQL schema for NYAON HUNTERS services.
 bash scripts/verify-v1.sh
 bash scripts/verify-v2.sh
 bash scripts/verify-v3.sh
+bash scripts/verify-v4.sh
 ```
 
 Override the bundled PostgreSQL tool location with `PG_BIN=/path/to/postgres/bin` when needed.
