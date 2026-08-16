@@ -1,3 +1,11 @@
+create table player_progression (
+    account_id uuid primary key references player_accounts(id) on delete restrict,
+    account_exp bigint not null default 0 check (account_exp >= 0),
+    highest_stage_unlocked integer not null default 1 check (highest_stage_unlocked >= 1),
+    version bigint not null default 0 check (version >= 0),
+    updated_at timestamptz not null default now()
+);
+
 create table battle_sessions (
     id uuid primary key,
     account_id uuid not null references player_accounts(id) on delete restrict,
