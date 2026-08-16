@@ -216,3 +216,20 @@ erDiagram
 - `source_id`, `reference_id`, `window_id` 일부는 의도적인 다형/논리 참조이며 물리 FK가 아닙니다.
 
 현재 미포함: 서버 시간 기반 정찰/방치 보상 V6(다음 구현 단계).
+# KORION wallet linking (V7)
+
+- `player_accounts` 1:N `korion_wallet_link_requests`
+- `player_accounts` 1:1 `player_korion_wallet_links`
+- `korion_wallet_link_requests` 1:0..1 `player_korion_wallet_links`
+- `player_accounts` 1:0..1 `player_account_link_rewards`
+- The composite request/account foreign key prevents linking a request owned by another account.
+- A partial unique index permits only one `PENDING` request per account.
+- A wallet address can belong to only one NYAON account after verification.
+- The reward row is the stable ledger reference for the one-time dual-link reward.
+
+# Legal documents (V8)
+
+- `legal_documents` stores approved privacy-policy and terms-of-service versions by normalized locale.
+- `(document_type, locale, version)` is immutable version identity.
+- A partial unique index permits only one active document for each type and locale.
+- The API serves only active documents whose `effective_at` is not in the future; no guessed locale fallback is used.
