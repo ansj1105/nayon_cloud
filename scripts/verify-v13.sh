@@ -148,6 +148,7 @@ SQL
 
 test "$($pg_bin/psql -Atqc "select count(*) from subscription_plans")" = "2"
 test "$($pg_bin/psql -Atqc "select count(*) from information_schema.tables where table_schema='public' and table_name in ('subscription_plans','subscription_benefit_versions','player_subscriptions','subscription_verification_requests','google_play_rtdn_events','level_reward_versions','player_level_reward_claims','player_subscription_initial_rewards','player_subscription_daily_rewards')")" = "9"
+test "$($pg_bin/psql -Atqc "select count(*) from information_schema.columns where table_schema='public' and table_name='subscription_verification_requests' and column_name in ('store_product_id','purchase_token','purchase_token_hash') and is_nullable='NO'")" = "3"
 
 "$pg_bin/psql" -v ON_ERROR_STOP=1 -c "delete from player_level_reward_claims" >/dev/null
 "$pg_bin/psql" -v ON_ERROR_STOP=1 -c "delete from economy_ledger where reason_code='LEVEL_REWARD'" >/dev/null

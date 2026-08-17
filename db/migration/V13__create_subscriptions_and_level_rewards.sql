@@ -126,6 +126,9 @@ create table subscription_verification_requests (
         references player_accounts(id) on delete restrict,
     subscription_id uuid not null,
     request_hash char(64) not null,
+    store_product_id varchar(200) not null,
+    purchase_token text not null,
+    purchase_token_hash char(64) not null,
     state varchar(16) not null
         check (state in ('PENDING', 'COMPLETED', 'REJECTED')),
     response_payload jsonb,
@@ -136,6 +139,9 @@ create table subscription_verification_requests (
         foreign key (subscription_id, account_id)
         references player_subscriptions(id, account_id) on delete restrict,
     check (request_hash ~ '^[0-9a-f]{64}$'),
+    check (char_length(trim(store_product_id)) > 0),
+    check (char_length(trim(purchase_token)) > 0),
+    check (purchase_token_hash ~ '^[0-9a-f]{64}$'),
     check ((state = 'PENDING' and response_payload is null)
         or (state = 'COMPLETED' and response_payload is not null
             and failure_code is null)
@@ -144,6 +150,9 @@ create table subscription_verification_requests (
 
 create index subscription_verification_account_created_idx
     on subscription_verification_requests(account_id, created_at desc);
+
+create index subscription_verification_token_idx
+    on subscription_verification_requests(purchase_token_hash);
 
 create table google_play_rtdn_events (
     message_id varchar(200) primary key,
@@ -282,4 +291,3 @@ comment on table player_level_reward_claims is
     '결제 주기와 재구독으로 초기화되지 않는 계정별 평생 1회 레벨 보상';
 comment on table google_play_rtdn_events is
     'Pub/Sub messageId 기반 Google Play 구독 상태 알림 멱등 기록';
-
